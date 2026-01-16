@@ -1,9 +1,12 @@
 <?php
-/* 
- *
- * cash_on_pickup.php
- *
- * @copyright Copyright 2019 Zen4All
- */
+/**
+ * @copyright Copyright 2003-2024 Zen Cart Development Team
+ * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
+ * @version $Id: DrByte 2024 Mar 23 New in v2.1.0-alpha1 $
+*/
 
-define('BOX_CONFIGURATION_CASH_ON_PICKUP', 'Cash on Pickup');
+$define = [
+  'BOX_CONFIGURATION_CASH_ON_PICKUP', 'Cash on Pickup',
+];
+
+return $define;
