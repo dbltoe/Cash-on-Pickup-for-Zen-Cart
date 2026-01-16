@@ -6,7 +6,7 @@
 */
 
 $define = [
-  'BOX_CONFIGURATION_CASH_ON_PICKUP', 'Cash on Pickup',
+	'BOX_CONFIGURATION_CASH_ON_PICKUP' => 'Cash on Pickup',
 ];
 
 return $define;
