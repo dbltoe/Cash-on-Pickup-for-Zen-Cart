@@ -13,6 +13,7 @@ this module was 'built' from the cod module, lending heavily. I thought I would 
 
 - Original Module by: Stephen.Hewitson (at) gmail.com
 - Updated by: Design75/Zen4All (http://zen4all.nl)
+- Updated by: dbltoe (at) gmail.com
 
 ## Change log
 
