@@ -18,4 +18,4 @@ this module was 'built' from the cod module, lending heavily. I thought I would 
 
 inlcludes/modules/payment/cop.php:
 
-Updated the code to make the module work with the current Zen Cart version (1.5.4), previous versions, and probably future versions as well.
+Updated the code to make the module work with the current Zen Cart version (2.1.0), and probably future versions as well.
