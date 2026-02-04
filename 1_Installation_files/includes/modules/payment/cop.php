@@ -7,9 +7,8 @@
  * @copyright Portions Copyright 2003-2018 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: 2.0.0 Author: dbltoe
+ * @version $Id: 2.0.0 Author: dbltoe - PHP 8.4 compatible update
  */
-
 class cop
 {
     public string $code;
@@ -19,6 +18,8 @@ class cop
     public ?int $sort_order = null;
     public ?int $order_status = null;
 
+    private int $_check = 0; // cache the check result (private property)
+
     public function __construct()
     {
         global $order;
@@ -26,7 +27,7 @@ class cop
         $this->code        = 'cop';
         $this->title       = MODULE_PAYMENT_COP_TEXT_TITLE;
         $this->description = MODULE_PAYMENT_COP_TEXT_DESCRIPTION;
-        $this->sort_order  = defined('MODULE_PAYMENT_COP_SORT_ORDER') ? MODULE_PAYMENT_COP_SORT_ORDER : null;
+        $this->sort_order  = defined('MODULE_PAYMENT_COP_SORT_ORDER') ? (int)MODULE_PAYMENT_COP_SORT_ORDER : null;
         $this->enabled     = (defined('MODULE_PAYMENT_COP_STATUS') && MODULE_PAYMENT_COP_STATUS === 'True');
 
         if (defined('MODULE_PAYMENT_COP_ORDER_STATUS_ID') && (int)MODULE_PAYMENT_COP_ORDER_STATUS_ID > 0) {
@@ -42,38 +43,44 @@ class cop
     {
         global $order, $db;
 
-        if (stripos($_SESSION['shipping']['id'] ?? '', 'storepickup') === false) {
-            $this->enabled = (MODULE_PAYMENT_COP_STATUS === 'True');
+        if (!$this->enabled) {
+            return;
+        }
 
+        // Only allow for storepickup shipping
+        if (stripos($_SESSION['shipping']['id'] ?? '', 'storepickup') === false) {
+            $this->enabled = false;
+            return;
+        }
+
+        // Zone restriction check
+        if ((int)MODULE_PAYMENT_COP_ZONE > 0) {
             $check_flag = false;
             $check = $db->Execute(
                 "SELECT zone_id
                  FROM " . TABLE_ZONES_TO_GEO_ZONES . "
-                 WHERE geo_zone_id = '" . (int)MODULE_PAYMENT_COP_ZONE . "'
+                 WHERE geo_zone_id = " . (int)MODULE_PAYMENT_COP_ZONE . "
                  AND zone_country_id = " . (int)$order->delivery['country']['id'] . "
                  ORDER BY zone_id"
             );
 
-            foreach ($check as $item) {
-                if ($item['zone_id'] < 1 || $item['zone_id'] == $order->delivery['zone_id']) {
+            while (!$check->EOF) {
+                if ($check->fields['zone_id'] < 1 || $check->fields['zone_id'] == $order->delivery['zone_id']) {
                     $check_flag = true;
                     break;
                 }
+                $check->MoveNext();
             }
 
             if (!$check_flag) {
                 $this->enabled = false;
+                return;
             }
         }
 
-        // Disable module if order contains only virtual products
-        if ($this->enabled && $order->content_type !== 'physical') {
+        // Disable if order contains only virtual products
+        if ($order->content_type !== 'physical') {
             $this->enabled = false;
-        }
-
-        // Future/other status checks can go here
-        if ($this->enabled) {
-            // other checks here
         }
     }
 
@@ -120,18 +127,25 @@ class cop
         return false;
     }
 
-    public function check(): int
+    /**
+     * Check if this payment module is installed
+     * Matches Zen Cart base payment class signature to avoid PHP 8.4 deprecation
+     *
+     * @param mixed|null $module Optional parameter (unused) to match parent signature
+     * @return int 1 if installed, 0 otherwise
+     */
+    public function check($module = null): int
     {
         global $db;
 
-        if (!isset($this->_check)) {
+        if (!isset($this->_check) || $this->_check === 0) {
             $check_query = $db->Execute(
                 "SELECT configuration_value
                  FROM " . TABLE_CONFIGURATION . "
                  WHERE configuration_key = 'MODULE_PAYMENT_COP_STATUS'"
             );
 
-            $this->_check = $check_query->RecordCount();
+            $this->_check = $check_query->RecordCount() > 0 ? 1 : 0;
         }
 
         return $this->_check;
@@ -149,57 +163,4 @@ class cop
 
         $db->Execute(
             "INSERT INTO " . TABLE_CONFIGURATION . "
-             (configuration_title, configuration_key, configuration_value, configuration_description,
-              configuration_group_id, sort_order, set_function, date_added)
-             VALUES ('Enable Cash On Delivery Module', 'MODULE_PAYMENT_COP_STATUS', 'True',
-                     'Do you want to accept Cash On Pickup payments?', 6, 1,
-                     'zen_cfg_select_option(array(\'True\', \'False\'), ', now())"
-        );
-
-        $db->Execute(
-            "INSERT INTO " . TABLE_CONFIGURATION . "
-             (configuration_title, configuration_key, configuration_value, configuration_description,
-              configuration_group_id, sort_order, use_function, set_function, date_added)
-             VALUES ('Payment Zone', 'MODULE_PAYMENT_COP_ZONE', '0',
-                     'If a zone is selected, only enable this payment method for that zone.', 6, 2,
-                     'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())"
-        );
-
-        $db->Execute(
-            "INSERT INTO " . TABLE_CONFIGURATION . "
-             (configuration_title, configuration_key, configuration_value, configuration_description,
-              configuration_group_id, sort_order, date_added)
-             VALUES ('Sort order of display.', 'MODULE_PAYMENT_COP_SORT_ORDER', '0',
-                     'Sort order of display. Lowest is displayed first.', 6, 0, now())"
-        );
-
-        $db->Execute(
-            "INSERT INTO " . TABLE_CONFIGURATION . "
-             (configuration_title, configuration_key, configuration_value, configuration_description,
-              configuration_group_id, sort_order, set_function, use_function, date_added)
-             VALUES ('Set Order Status', 'MODULE_PAYMENT_COP_ORDER_STATUS_ID', '0',
-                     'Set the status of orders made with this payment module to this value', 6, 0,
-                     'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())"
-        );
-    }
-
-    public function remove(): void
-    {
-        global $db;
-
-        $db->Execute(
-            "DELETE FROM " . TABLE_CONFIGURATION . "
-             WHERE configuration_key IN ('" . implode("', '", $this->keys()) . "')"
-        );
-    }
-
-    public function keys(): array
-    {
-        return [
-            'MODULE_PAYMENT_COP_STATUS',
-            'MODULE_PAYMENT_COP_ZONE',
-            'MODULE_PAYMENT_COP_ORDER_STATUS_ID',
-            'MODULE_PAYMENT_COP_SORT_ORDER'
-        ];
-    }
-}
+             (configuration_title, configuration_key, configuration_value, configuration
