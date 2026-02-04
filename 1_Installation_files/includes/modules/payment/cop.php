@@ -163,4 +163,4 @@ class cop
 
         $db->Execute(
             "INSERT INTO " . TABLE_CONFIGURATION . "
-             (configuration_title, configuration_key, configuration_value, configuration)
+             (configuration_title, configuration_key, configuration_value, configuration)";
