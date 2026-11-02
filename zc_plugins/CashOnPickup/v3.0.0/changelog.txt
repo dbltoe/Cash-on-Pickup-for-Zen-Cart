@@ -1,0 +1,15 @@
+Cash on Pickup
+
+v3.0.0
+- Rebuilt as an encapsulated plugin for Zen Cart 1.5.8 through 3.0.0 and PHP 7.4 through 8.5.
+- Settings and past orders carry over. Delete the old files first; the Plugin Manager names any it finds.
+- Fixed the cop::$_check deprecation on PHP 8.2 and later.
+- Fixed a fatal error on past orders when the module was removed but its file was left behind.
+- Fixed the Payment Zone, which offered the module on every shipping method.
+- One Page Checkout now refreshes when a customer switches to or from Store Pickup.
+- Added uninstall directions and a note when Store Pickup shipping isn't enabled.
+- Added an Allow Guest Checkout setting, off by default, for One Page Checkout guests.
+- Removed the admin startup files and the empty Configuration page.
+
+v2.0.0
+- Modernized for current PHP.

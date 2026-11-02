@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cash on Pickup v3.0.0 - Read Me</title>
+<style>
+body { font: 15px/1.5 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #222; background: #fff; margin: 0; padding: 24px; max-width: 860px; }
+h1 { font-size: 26px; line-height: 1.25; margin: 0 0 4px; }
+h2 { font-size: 20px; line-height: 1.3; margin: 32px 0 8px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+h3 { font-size: 16px; line-height: 1.3; margin: 20px 0 6px; }
+code, pre { font-family: Consolas, Menlo, monospace; font-size: 13px; }
+pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 1px 4px; }
+table { border-collapse: collapse; width: 100%; margin: 8px 0 16px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border: 1px solid #ddd; }
+th { background: #f0f0f0; }
+.toc { columns: 2; column-gap: 24px; padding-left: 20px; }
+.note { background: #fff8e1; border-left: 4px solid #f0b400; padding: 8px 12px; margin: 12px 0; }
+.version { color: #555; }
+</style>
+</head>
+<body>
+
+<h1>Cash on Pickup</h1>
+<p class="version">Version 3.0.0 | Zen Cart 1.5.8 through 3.0.0 | PHP 7.4 through 8.5</p>
+
+<ol class="toc">
+<li><a href="#overview">What it does</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#install">Installing</a></li>
+<li><a href="#moving">Moving from v2.0.0 or earlier</a></li>
+<li><a href="#settings">Settings</a></li>
+<li><a href="#opc">One Page Checkout</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+<li><a href="#uninstall">Removing and uninstalling</a></li>
+<li><a href="#support">Support, credits and license</a></li>
+</ol>
+
+<h2 id="overview">1. What it does</h2>
+<p>Cash on Pickup lets a customer place an order online and pay cash when they pick it up at your location. It's offered only when the customer chooses Store Pickup shipping, so nobody can pick it for an order you're mailing.</p>
+<p>The module takes no payment itself. The order comes through with Cash on Pickup as its payment method, and you collect the money at the counter.</p>
+
+<h2 id="requirements">2. Requirements</h2>
+<ul>
+<li>Zen Cart 1.5.8 through 3.0.0, on PHP 7.4 through 8.5, within the PHP range your Zen Cart release supports.</li>
+<li>The <strong>Store Pickup</strong> shipping module that comes with Zen Cart, enabled under Modules &gt; Shipping. The module's panel under Modules &gt; Payment tells you if it isn't.</li>
+</ul>
+
+<h2 id="install">3. Installing</h2>
+<ol>
+<li>Upload the <code>zc_plugins</code> folder from the package to your store's main folder.</li>
+<li><strong>On Zen Cart 1.5.8 through 2.1.x only,</strong> also upload the <code>includes</code> folder from the package's <code>for_zen_cart_1.5.8_to_2.1.x</code> folder. Those two bridge files are how those releases find the module. The Plugin Manager tells you if they're missing.</li>
+<li>Go to Modules &gt; Plugin Manager, select <strong>Cash on Pickup</strong> and click Install.</li>
+<li>Click the <strong>Settings</strong> button in its panel, or go to Modules &gt; Payment and select Cash on Pickup. Click Install and set it up.</li>
+</ol>
+
+<h2 id="moving">4. Moving from v2.0.0 or earlier</h2>
+<p>Earlier versions weren't plugins, so they don't show in the Plugin Manager, and they can't run beside this one. Your settings and past orders carry over, because the module's code and setting names haven't changed. The one new setting, Allow Guest Checkout, starts off, so if One Page Checkout guests were using Cash on Pickup, turn it on after you move.</p>
+<ol>
+<li>Delete these files, the admin ones first:
+<ul>
+<li><code>YOUR_ADMIN/includes/auto_loaders/config.cash_on_pickup.php</code></li>
+<li><code>YOUR_ADMIN/includes/init_includes/init_cash_on_pickup.php</code></li>
+<li><code>YOUR_ADMIN/includes/installers/cash_on_pickup/</code> (the whole folder)</li>
+<li><code>YOUR_ADMIN/includes/languages/english/extra_definitions/lang.cash_on_pickup.php</code> (or <code>cash_on_pickup.php</code> on a very old install)</li>
+<li><code>includes/modules/payment/cop.php</code></li>
+<li><code>includes/languages/english/modules/payment/lang.cop.php</code> (or <code>cop.php</code> on a very old install)</li>
+</ul>
+</li>
+<li>Follow <a href="#install">Installing</a>. On 1.5.8 through 2.1.x the bridge files go back in the last two places above, under the same names.</li>
+</ol>
+<p>The Plugin Manager refuses the install and names the files if any are still there. Once it installs, it removes the old version's leftovers from the database: the Version row, its empty settings group and its Configuration menu page.</p>
+
+<h2 id="settings">5. Settings</h2>
+<table>
+<tr><th>Setting</th><th>What it does</th></tr>
+<tr><td>Enable Cash on Pickup Module</td><td>True offers it at checkout when the order qualifies.</td></tr>
+<tr><td>Payment Zone</td><td>If you pick a zone, only customers whose delivery address is in that zone see it. Leave it at --none-- for everyone.</td></tr>
+<tr><td>Allow Guest Checkout</td><td>Off by default. True lets One Page Checkout guests use it. They have no account with you, so you'd be holding goods for someone you can't look up.</td></tr>
+<tr><td>Sort order of display.</td><td>Where it sits in the list of payment methods. Lowest comes first.</td></tr>
+<tr><td>Set Order Status</td><td>The status new orders get. A separate "awaiting pickup" status can help you see what's still unpaid.</td></tr>
+</table>
+<p>It shows at checkout when all of these are true: it's enabled, Store Pickup is the chosen shipping method, the address passes the Payment Zone, the whole order is physical goods, and the customer isn't a guest unless you've allowed guests. An order with any download in it doesn't qualify, the same as Zen Cart's own Cash on Delivery.</p>
+
+<h2 id="opc">6. One Page Checkout</h2>
+<p>One Page Checkout changes the shipping method without rebuilding the payment list. So when a customer switches to or from Store Pickup, this plugin asks One Page Checkout to refresh the page, and the list updates. Their choices stay, but anything already typed into a card form has to be typed again. It doesn't happen on any other shipping change, or on orders that can't use Cash on Pickup anyway.</p>
+<div class="note">Guests don't see Cash on Pickup unless you set Allow Guest Checkout to True. If they still don't, check One Page Checkout's own list of payment methods that guests can't use, under Configuration &gt; One Page Checkout. If <code>cop</code> is in that list, it wins.</div>
+
+<h2 id="troubleshooting">7. Troubleshooting</h2>
+<table>
+<tr><th>What you see</th><th>Why, and what to do</th></tr>
+<tr><td>It doesn't show at checkout</td><td>Check <a href="#settings">the five conditions</a>. Most often Store Pickup isn't enabled, or isn't the selected shipping method.</td></tr>
+<tr><td>Plugin Manager refuses the install</td><td>Its message names what's missing or what's in the way. See <a href="#moving">Moving from v2.0.0 or earlier</a>.</td></tr>
+<tr><td>A log entry saying <code>Creation of dynamic property cop::$_check is deprecated</code></td><td>That's v2.0.0 on PHP 8.2 or later, and it's harmless. It shows even after you click Remove, because Remove keeps the files. This version fixes it.</td></tr>
+<tr><td>Under Modules &gt; Payment, a title saying the plugin folder is missing</td><td>The bridge files are there but <code>zc_plugins/CashOnPickup</code> isn't. Put the folder back or delete the two files the title names.</td></tr>
+</table>
+
+<h2 id="uninstall">8. Removing and uninstalling</h2>
+<ul>
+<li><strong>Remove</strong> under Modules &gt; Payment takes it off your checkout and deletes its settings. The plugin stays, so you can install it again.</li>
+<li><strong>Uninstall</strong> in the Plugin Manager does the same if you haven't already.</li>
+<li>To take it off the server after that, use the Plugin Manager's Clean Up, or delete the <code>zc_plugins/CashOnPickup</code> folder. If you uploaded the bridge files, delete those two as well.</li>
+</ul>
+<p>Past orders aren't touched. They keep Cash on Pickup as their payment method.</p>
+
+<h2 id="support">9. Support, credits and license</h2>
+<p>Support is in the <a href="https://www.zen-cart.com/threads/207082?page=1#post-1344942">forum thread</a>. The source is on <a href="https://github.com/dbltoe/Cash-on-Pickup-for-Zen-Cart">GitHub</a>.</p>
+<p>Original module by Stephen Hewitson, updated by Design75 (Zen4All), and rebuilt as a plugin by My Zen Cart Host (dbltoe).</p>
+<p>Released under the <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html">GNU General Public License v2</a>.</p>
+
+</body>
+</html>
