@@ -4,8 +4,14 @@
  *
  * The description is echoed as raw HTML in the Plugin Manager's info panel,
  * which is also where the Install / Uninstall buttons live, so the ReadMe,
- * Settings, Forum Thread and GitHub buttons are placed here. The ReadMe link
- * is built from DIR_WS_CATALOG so it works whatever the store lives at.
+ * Settings, Forum Thread and GitHub buttons are placed here.
+ *
+ * ReadMe opens README.md through the plugin's own admin page
+ * (index.php?cmd=cash_on_pickup_readme): behind the admin login, superusers
+ * only, in its own window. It is shown only to superusers; the page enforces
+ * that too, because Zen Cart 1.5.8-2.1 keep the description they first saw.
+ * Forum Thread and GitHub go off-site, so they open in a new window with
+ * rel="noopener noreferrer" (zencart/zencart#8031).
  *
  * On v2.2 and later the description is refreshed from this file on every
  * Plugin Manager scan; on v1.5.8, v2.0 and v2.1 it is captured once, when the
@@ -13,11 +19,17 @@
  * refreshes it there (at Install, Upgrade and Uninstall).
  *
  * @package  CashOnPickup
- * @license  https://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License V2.0
+ * @license  https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
-$copPluginDir = 'zc_plugins/CashOnPickup/v3.0.0/';
-$copReadmeUrl = (defined('DIR_WS_CATALOG') ? DIR_WS_CATALOG : '/') . $copPluginDir . 'readme.html';
+$copReadmeUrl = 'index.php?cmd=cash_on_pickup_readme';
+// Zen Cart 3.0.0 reads every manifest on every admin page, early (template resolver),
+// before admin access is set up: zen_is_superuser() there is a fatal "Undefined constant
+// SUPERUSER_PROFILE" that takes down the whole admin. Ask only once that exists.
+$copShowReadme = true;
+if (function_exists('zen_is_superuser') && defined('SUPERUSER_PROFILE')) {
+    $copShowReadme = zen_is_superuser();
+}
 $copGithubUrl = 'https://github.com/dbltoe/Cash-on-Pickup-for-Zen-Cart';
 $copForumUrl = 'https://www.zen-cart.com/threads/207082?page=1#post-1344942';
 
@@ -51,7 +63,7 @@ $copSettingsUrl = $copIsInstalled ? 'index.php?cmd=modules&set=payment&module=co
  * the Author line and the core buttons further down the panel. Every gap is
  * 4px and the side padding 8px, so all four fit from a 1366px-wide window up.
  * Settings opens in the same tab (it's the admin itself); the others open a
- * new one.
+ * new one. ReadMe is left out for an admin who isn't a superuser.
  */
 $copGap = '4px';
 $copButtonStyle = ' style="margin:0 ' . $copGap . ' 0 0;padding-left:8px;padding-right:8px"';
@@ -63,14 +75,14 @@ $copButton = static function ($url, $label, $newTab) use ($copButtonStyle) {
 
 $copLinks =
     '<div style="margin:10px 0 0;padding:0 0 0 ' . $copGap . '">'
-    . $copButton($copReadmeUrl, 'ReadMe', true)
+    . ($copShowReadme ? $copButton($copReadmeUrl, 'ReadMe', true) : '')
     . ($copSettingsUrl !== '' ? $copButton($copSettingsUrl, 'Settings', false) : '')
     . $copButton($copForumUrl, 'Forum Thread', true)
     . $copButton($copGithubUrl, 'GitHub', true)
     . '</div>';
 
 return [
-    'pluginVersion' => 'v3.0.0',
+    'pluginVersion' => 'v3.0.1',
     'pluginName' => 'Cash on Pickup',
     'pluginDescription' =>
         'Lets customers pay cash when they pick up their order. It shows at checkout only when they choose '

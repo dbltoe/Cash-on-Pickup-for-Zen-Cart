@@ -14,7 +14,7 @@
  * and can't redeclare one during an upgrade.
  *
  * @package  CashOnPickup
- * @license  https://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License V2.0
+ * @license  https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
 use Zencart\PluginSupport\ScriptedInstaller as ScriptedInstallBase;

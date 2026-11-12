@@ -7,11 +7,8 @@
  * nothing to process; the settings live under Modules > Payment like any core
  * payment module's.
  *
- * Original module by Stephen Hewitson, updated by Design75 (Zen4All), rebuilt
- * as an encapsulated plugin by My Zen Cart Host (dbltoe).
- *
  * @package  CashOnPickup
- * @license  https://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License V2.0
+ * @license  https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
 if (!defined('IS_ADMIN_FLAG')) {

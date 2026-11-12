@@ -2,7 +2,7 @@
 
 ## Text and other languages
 
-All the wording is in `zc_plugins/CashOnPickup/v3.0.0/catalog/includes/languages/english/modules/payment/lang.cop.php`. It returns an array of definitions.
+All the wording is in `zc_plugins/CashOnPickup/v3.0.1/catalog/includes/languages/english/modules/payment/lang.cop.php`. It returns an array of definitions.
 
 To add a language, copy it to the matching folder, such as `.../languages/spanish/modules/payment/lang.cop.php`, and translate the values. Keep the keys as they are.
 

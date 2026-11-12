@@ -1,5 +1,11 @@
 Cash on Pickup
 
+v3.0.1
+Released 2026-11-11.
+- License: GNU General Public License, version 3 (was version 2).
+- readme.html is replaced by README.md. The ReadMe button in Plugin Manager opens it inside the admin, for superusers only, in its own window; it is no longer a public file under zc_plugins/.
+- Nothing changes at checkout or in the settings.
+
 v3.0.0
 - Rebuilt as an encapsulated plugin for Zen Cart 1.5.8 through 3.0.0 and PHP 7.4 through 8.5.
 - Settings and past orders carry over. Delete the old files first; the Plugin Manager names any it finds.

@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.0.1 (2026-11-11)
+
+- **License: GNU General Public License, version 3** (was version 2).
+- **readme.html is replaced by README.md.** The ReadMe button in Plugin Manager opens it inside the admin, for superusers only, in its own window (`index.php?cmd=cash_on_pickup_readme`); it is no longer a public file under `zc_plugins/`. The same README.md is at the root of the download.
+- Nothing changes at checkout or in the settings.
+
+Upgrading from v3.0.0: put the v3.0.1 folder beside the old one and click **Upgrade** in Modules > Plugin Manager. Your settings are kept. The bridge files for Zen Cart 1.5.8 through 2.1.x changed only in their license line, so the ones already on the store can stay.
+
 ## v3.0.0 (2026-11-01)
 
 Rebuilt as an encapsulated plugin for Zen Cart 1.5.8 through 3.0.0 and PHP 7.4 through 8.5. The module code and setting names haven't changed, so settings and past orders carry over.
